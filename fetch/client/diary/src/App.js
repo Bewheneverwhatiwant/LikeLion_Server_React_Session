@@ -91,6 +91,13 @@ font-size: 16px;
 color: #555;
 `;
 
+const Emotion = styled.span`
+  margin-right: 10px;
+  padding: 5px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+`;
+
 
 function App() {
   const [diaryList, setDiaryList] = useState([]); // 상태 이름 변경
@@ -126,10 +133,18 @@ function App() {
     e.preventDefault();
     const title = e.target.title.value;
     const content = e.target.content.value;
+    const emotions = [];
+    if (isJoyful) emotions.push('기쁨');
+    if (isSad) emotions.push('슬픔');
+    if (isAngry) emotions.push('화남');
+
     const timestamp = new Date().toISOString(); //날짜와 시간
-    axios.post("http://localhost:4000/api/diary", { title, content, timestamp })
+    axios.post("http://localhost:4000/api/diary", { title, content, emotions, timestamp })
       .then(() => {
         fetchDiaries(); // 목록 새로고침
+        setIsJoyful(false); // 체크박스 상태 초기화
+        setIsSad(false);
+        setIsAngry(false);
       });
   };
 
@@ -138,6 +153,10 @@ function App() {
     return new Date(dateString).toLocaleDateString('ko-KR', options);
   }
 
+  const [isJoyful, setIsJoyful] = useState(false);
+  const [isSad, setIsSad] = useState(false);
+  const [isAngry, setIsAngry] = useState(false);
+
   return (
     <>
       <Container>
@@ -145,6 +164,18 @@ function App() {
         <Form onSubmit={onSubmitHandler}>
           <Input name="title" placeholder="제목" />
           <TextArea name="content" placeholder="내용" />
+          <div>
+            <input type="checkbox" id="joyful" checked={isJoyful} onChange={(e) => setIsJoyful(e.target.checked)} />
+            <label htmlFor="joyful">기쁨</label>
+          </div>
+          <div>
+            <input type="checkbox" id="sad" checked={isSad} onChange={(e) => setIsSad(e.target.checked)} />
+            <label htmlFor="sad">슬픔</label>
+          </div>
+          <div>
+            <input type="checkbox" id="angry" checked={isAngry} onChange={(e) => setIsAngry(e.target.checked)} />
+            <label htmlFor="angry">화남</label>
+          </div>
           <SubmitButton type="submit">추가</SubmitButton>
         </Form>
         {diaryList && (
@@ -154,9 +185,12 @@ function App() {
                 <div>
                   <DiaryTitle>{diary.title}</DiaryTitle>
                   <DiaryContent>{diary.content}</DiaryContent>
-                  <DiaryContent>{formatDate(diary.timestamp)}</DiaryContent> {/* 날짜 형식 변환 */}
+                  <DiaryContent>{formatDate(diary.timestamp)}</DiaryContent>
+                  {diary.emotions && diary.emotions.map((emotion, index) => (
+                    <Emotion key={index}>{emotion}</Emotion>
+                  ))}
                 </div>
-                <DeleteButton onClick={() => handleDelete(diary.id)}>삭제</DeleteButton> {/* 삭제 버튼 추가 */}
+                <DeleteButton onClick={() => handleDelete(diary.id)}>삭제</DeleteButton>
               </DiaryItem>
             ))}
           </DiaryList>

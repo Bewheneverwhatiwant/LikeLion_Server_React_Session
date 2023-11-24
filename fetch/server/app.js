@@ -15,6 +15,7 @@ const diaryList = [
         title: "오늘은 리액트 세션~",
         content: "리액트는 왜 이렇게 재밌을까?",
         timestamp: new Date().toISOString(), // 현재 날짜와 시간 추가
+        emotions: ['기쁨', '슬픔', '화남']
     },
 ];
 
@@ -27,11 +28,12 @@ app.get("/api/diary", function (req, res) {
 });
 
 app.post("/api/diary", (req, res) => {
-    const { title, content, timestamp } = req.body;
+    const { title, content, emotions, timestamp } = req.body;
     diaryList.push({
         id: id++,
         title,
         content,
+        emotions, // emotions 필드에 배열 저장
         timestamp
     });
     return res.send("success");
