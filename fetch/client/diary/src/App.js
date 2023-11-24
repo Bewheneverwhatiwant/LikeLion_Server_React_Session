@@ -126,12 +126,17 @@ function App() {
     e.preventDefault();
     const title = e.target.title.value;
     const content = e.target.content.value;
-    const timestamp = new Date().toISOString(); // 현재 날짜와 시간
-    axios.post("http://localhost:4000/api/diary", { title, content, timestamp }) // URL 수정
+    const timestamp = new Date().toISOString(); //날짜와 시간
+    axios.post("http://localhost:4000/api/diary", { title, content, timestamp })
       .then(() => {
         fetchDiaries(); // 목록 새로고침
       });
   };
+
+  function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(dateString).toLocaleDateString('ko-KR', options);
+  }
 
   return (
     <>
@@ -149,7 +154,7 @@ function App() {
                 <div>
                   <DiaryTitle>{diary.title}</DiaryTitle>
                   <DiaryContent>{diary.content}</DiaryContent>
-                  <DiaryContent>{diary.timestamp}</DiaryContent>
+                  <DiaryContent>{formatDate(diary.timestamp)}</DiaryContent> {/* 날짜 형식 변환 */}
                 </div>
                 <DeleteButton onClick={() => handleDelete(diary.id)}>삭제</DeleteButton> {/* 삭제 버튼 추가 */}
               </DiaryItem>

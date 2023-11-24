@@ -14,6 +14,7 @@ const diaryList = [
         id: 1,
         title: "오늘은 리액트 세션~",
         content: "리액트는 왜 이렇게 재밌을까?",
+        timestamp: new Date().toISOString(), // 현재 날짜와 시간 추가
     },
 ];
 
